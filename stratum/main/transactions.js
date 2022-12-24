@@ -11,30 +11,30 @@ const Transactions = function(config, rpcData) {
 
   // Mainnet Configuration
   this.configMainnet = {
-    bech32: 'bc',
+    bech32: '',
     bip32: {
       public: Buffer.from('0488B21E', 'hex').readUInt32LE(0),
       private: Buffer.from('0488ADE4', 'hex').readUInt32LE(0),
     },
-    peerMagic: 'f9beb4d9',
-    pubKeyHash: Buffer.from('00', 'hex').readUInt8(0),
-    scriptHash: Buffer.from('05', 'hex').readUInt8(0),
+    peerMagic: '4556524d',
+    pubKeyHash: Buffer.from('21', 'hex').readUInt8(0),
+    scriptHash: Buffer.from('5C', 'hex').readUInt8(0),
     wif: Buffer.from('80', 'hex').readUInt8(0),
-    coin: 'btc',
+    coin: 'evr',
   };
 
   // Testnet Configuration
   this.configTestnet = {
-    bech32: 'tb',
+    bech32: '',
     bip32: {
       public: Buffer.from('043587CF', 'hex').readUInt32LE(0),
       private: Buffer.from('04358394', 'hex').readUInt32LE(0),
     },
-    peerMagic: '0b110907',
+    peerMagic: '45565254',
     pubKeyHash: Buffer.from('6F', 'hex').readUInt8(0),
     scriptHash: Buffer.from('C4', 'hex').readUInt8(0),
     wif: Buffer.from('EF', 'hex').readUInt8(0),
-    coin: 'btc',
+    coin: 'evr',
   };
 
   // Calculate Generation Transaction
@@ -46,7 +46,7 @@ const Transactions = function(config, rpcData) {
     const txInPrevOutIndex = Math.pow(2, 32) - 1;
     const txOutputBuffers = [];
 
-    let txVersion = 4;
+    let txVersion = 1;
     const network = !_this.config.settings.testnet ?
       _this.configMainnet :
       _this.configTestnet;
@@ -94,6 +94,18 @@ const Transactions = function(config, rpcData) {
       scriptSig,
     ]);
 
+    // Handle Founder Transactions
+    _this.rpcData.coinbasetxn.minerdevfund.addresses.forEach((address) => {
+      const founderReward = _this.rpcData.coinbasetxn.minerdevfund.minimumvalue;
+      const founderScript = utils.addressToScript(address, network);
+      reward -= founderReward;
+      txOutputBuffers.push(Buffer.concat([
+        utils.packUInt64LE(founderReward),
+        utils.varIntBuffer(founderScript.length),
+        founderScript,
+      ]));
+    })
+    
     // Handle Recipient Transactions
     let recipientTotal = 0;
     _this.config.primary.recipients.forEach((recipient) => {

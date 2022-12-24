@@ -105,8 +105,8 @@ const Pool = function(config, configMain, callback) {
   // Check if Auxiliary Share is a Valid Block Candidate
   this.checkAuxiliary = function(shareData, auxShareData) {
     if (_this.auxiliary.enabled) {
-      const shareMultiplier = Algorithms.sha256d.multiplier;
-      const shareDiff = Algorithms.sha256d.diff / Number(_this.auxiliary.rpcData.target);
+      const shareMultiplier = Algorithms.kawpow.multiplier;
+      const shareDiff = Algorithms.kawpow.diff / Number(_this.auxiliary.rpcData.target);
       shareData.blockDiffAuxiliary = shareDiff * shareMultiplier;
       auxShareData.blockDiffAuxiliary = shareDiff * shareMultiplier;
       return _this.auxiliary.rpcData.target >= auxShareData.headerDiff;
@@ -1100,7 +1100,7 @@ const Pool = function(config, configMain, callback) {
       // Initialize Statistics/Settings
       _this.settings.testnet = (resultData.getblockchaininfo.chain === 'test') ? true : false;
       _this.statistics.connections = resultData.getnetworkinfo.connections;
-      _this.statistics.difficulty = difficulty * Algorithms.sha256d.multiplier;
+      _this.statistics.difficulty = difficulty * Algorithms.kawpow.multiplier;
       _this.config.settings.testnet = _this.settings.testnet;
 
       // Handle Callback
@@ -1357,7 +1357,7 @@ const Pool = function(config, configMain, callback) {
     // Handle Client Subscription Events
     client.on('client.subscription', (params, callback) => {
       const extraNonce = _this.manager.extraNonceCounter.next();
-      callback(null, extraNonce, _this.manager.extraNonce2Size);
+      callback(null, extraNonce);
 
       // Send Correct Initial Difficulty to Miner
       const validPorts = _this.config.ports
@@ -1367,7 +1367,7 @@ const Pool = function(config, configMain, callback) {
       else client.broadcastDifficulty(8);
 
       // Send Mining Job Parameters to Miner
-      const jobParams = _this.manager.currentJob.handleParameters(true);
+      const jobParams = _this.manager.currentJob.handleParameters(client, true);
       client.broadcastMiningJob(jobParams);
     });
 
@@ -1377,12 +1377,9 @@ const Pool = function(config, configMain, callback) {
       // Build Share Submission Data
       const submission = {
         extraNonce1: client.extraNonce1,
-        extraNonce2: message.params[2],
-        nTime: message.params[3],
-        nonce: message.params[4],
-        versionBit: message.params[5],
-        versionMask: client.versionMask,
-        asicboost: client.asicboost,
+        nonce: message.params[2].substr(2),
+        headerHash: message.params[3].substr(2),
+        mixHash: message.params[4].substr(2),
       };
 
       // Submit Share to Job Manager

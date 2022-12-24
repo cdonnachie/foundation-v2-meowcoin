@@ -4,8 +4,15 @@
             "target_name": "hashing",
             "sources": [
                 "hashing.cc",
-                "algorithms/sha256d.c",
-                "algorithms/utils/sph_sha2.c",
+                "algorithms/sha256d/sha256d.c",
+                "algorithms/sha256d/utils/sph_sha2.c",
+                "algorithms/evrprogpow/evrprogpow.cpp",
+                "algorithms/evrprogpow/evrprogpow_progpow.cpp",
+                "algorithms/evrprogpow/utils/ethash/primes.c",
+                "algorithms/evrprogpow/utils/keccak/keccak.c",
+                "algorithms/evrprogpow/utils/keccak/keccakf800.c",
+                "algorithms/evrprogpow/utils/keccak/keccakf1600.c",
+                "algorithms/evrprogpow/utils/utilstrencodings.cpp",
             ],
             "include_dirs": [
                 ".",
