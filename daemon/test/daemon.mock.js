@@ -4,30 +4,43 @@ exports.getBlockTemplate = function() {
     'capabilities': [
       'proposal'
     ],
-    'version': 536870912,
-    'rules': [],
-    'vbavailable': {},
+    'version': 805306368,
+    'rules': [
+    ],
+    'vbavailable': {
+    },
     'vbrequired': 0,
-    'previousblockhash': '9719aefb83ef6583bd4c808bbe7d49b629a60b375fc6e36bee039530bc7727e2',
-    'transactions': [],
+    'previousblockhash': '00000000001d67585fb7283183b9baee75b5133591608c44a15bc3daf218c1a9',
+    'transactions': [
+    ],
     'coinbaseaux': {
       'flags': ''
     },
-    'coinbasevalue': 5000000000,
-    'longpollid': '9719aefb83ef6583bd4c808bbe7d49b629a60b375fc6e36bee039530bc7727e22',
-    'target': '00000ffff0000000000000000000000000000000000000000000000000000000',
-    'mintime': 1614044921,
+    'coinbasetxn': {
+      'minerdevfund': {
+        'addresses': [
+          'eHNUGzw8ZG9PGC8gKtnneyMaQXQTtAUm98',
+          'e7Tkk3kjS9NjSYVX2Q8qzxXB1WKMRvea1j'
+        ],
+        'minimumvalue': 27780000000
+      }
+    },
+    'coinbasevalue': 277800000000,
+    'longpollid': '00000000001d67585fb7283183b9baee75b5133591608c44a15bc3daf218c1a977817',
+    'target': '00000000001f00fb000000000000000000000000000000000000000000000000',
+    'mintime': 1671853254,
     'mutable': [
       'time',
       'transactions',
       'prevblock'
     ],
     'noncerange': '00000000ffffffff',
-    'sigoplimit': 20000,
-    'sizelimit': 1000000,
-    'curtime': 1614201893,
-    'bits': '1e0ffff0',
-    'height': 1,
+    'sigoplimit': 80000,
+    'sizelimit': 8000000,
+    'weightlimit': 8000000,
+    'curtime': 1671853681,
+    'bits': '1b1f00fb',
+    'height': 77816,
     'default_witness_commitment': '6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9'
   };
 };

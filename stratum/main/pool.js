@@ -105,8 +105,8 @@ const Pool = function(config, configMain, callback) {
   // Check if Auxiliary Share is a Valid Block Candidate
   this.checkAuxiliary = function(shareData, auxShareData) {
     if (_this.auxiliary.enabled) {
-      const shareMultiplier = Algorithms.kawpow.multiplier;
-      const shareDiff = Algorithms.kawpow.diff / Number(_this.auxiliary.rpcData.target);
+      const shareMultiplier = Algorithms.evrprogpow.multiplier;
+      const shareDiff = Algorithms.evrprogpow.diff / Number(_this.auxiliary.rpcData.target);
       shareData.blockDiffAuxiliary = shareDiff * shareMultiplier;
       auxShareData.blockDiffAuxiliary = shareDiff * shareMultiplier;
       return _this.auxiliary.rpcData.target >= auxShareData.headerDiff;
@@ -1100,7 +1100,7 @@ const Pool = function(config, configMain, callback) {
       // Initialize Statistics/Settings
       _this.settings.testnet = (resultData.getblockchaininfo.chain === 'test') ? true : false;
       _this.statistics.connections = resultData.getnetworkinfo.connections;
-      _this.statistics.difficulty = difficulty * Algorithms.kawpow.multiplier;
+      _this.statistics.difficulty = difficulty * Algorithms.evrprogpow.multiplier;
       _this.config.settings.testnet = _this.settings.testnet;
 
       // Handle Callback

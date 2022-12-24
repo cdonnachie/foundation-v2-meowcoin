@@ -95,16 +95,15 @@ const Transactions = function(config, rpcData) {
     ]);
 
     // Handle Founder Transactions
-    _this.rpcData.coinbasetxn.minerdevfund.addresses.forEach((address) => {
-      const founderReward = _this.rpcData.coinbasetxn.minerdevfund.minimumvalue;
-      const founderScript = utils.addressToScript(address, network);
-      reward -= founderReward;
-      txOutputBuffers.push(Buffer.concat([
-        utils.packUInt64LE(founderReward),
-        utils.varIntBuffer(founderScript.length),
-        founderScript,
-      ]));
-    })
+    const address = _this.rpcData.coinbasetxn.minerdevfund.addresses[0];
+    const founderReward = _this.rpcData.coinbasetxn.minerdevfund.minimumvalue;
+    const founderScript = utils.addressToScript(address, network);
+    reward -= founderReward;
+    txOutputBuffers.push(Buffer.concat([
+      utils.packUInt64LE(founderReward),
+      utils.varIntBuffer(founderScript.length),
+      founderScript,
+    ]));
     
     // Handle Recipient Transactions
     let recipientTotal = 0;

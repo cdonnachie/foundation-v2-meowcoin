@@ -4,7 +4,7 @@ const configMain = require('../../configs/main');
 const events = require('events');
 const testdata = require('../../daemon/test/daemon.mock');
 
-config.primary.address = 'bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq';
+config.primary.address = 'EQrdpxFbEYgBUk2tfsQcUyHUcGHCN35PMH';
 config.primary.recipients = [];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,10 +53,10 @@ describe('Test manager functionality', () => {
 
   test('Test initial manager calculations', () => {
     const manager = new Manager(configCopy, configMainCopy);
-    expect(manager.extraNonceCounter.size).toBe(4);
-    expect(manager.extraNonceCounter.next().length).toBe(8);
-    expect(manager.extraNoncePlaceholder).toStrictEqual(Buffer.from('f000000ff111111f', 'hex'));
-    expect(manager.extraNonce2Size).toBe(4);
+    expect(manager.extraNonceCounter.size).toBe(2);
+    expect(manager.extraNonceCounter.next().length).toBe(4);
+    expect(manager.extraNoncePlaceholder).toStrictEqual(Buffer.from('f000', 'hex'));
+    expect(manager.extraNonce2Size).toBe(0);
   });
 
   test('Test template updates given updated blockTemplate', () => {
@@ -97,30 +97,9 @@ describe('Test manager functionality', () => {
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
       extraNonce1: 0,
-      extraNonce2: '00'.toString('hex'),
-      nTime: 0,
-      nonce: 0,
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
-    };
-    const client = mockClient();
-    const response = manager.handleShare(1, client, submission);
-    expect(response.error[0]).toBe(20);
-    expect(response.error[1]).toBe('incorrect size of extranonce2');
-  });
-
-  test('Test share submission process [2]', () => {
-    const manager = new Manager(configCopy, configMainCopy);
-    manager.handleTemplate(rpcDataCopy, false);
-    const submission = {
-      extraNonce1: 0,
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: 0,
-      nonce: 0,
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      nonce: '00',
+      headerHash: '00',
+      mixHash: '00',
     };
     const client = mockClient();
     const response = manager.handleShare(0, client, submission);
@@ -128,22 +107,34 @@ describe('Test manager functionality', () => {
     expect(response.error[1]).toBe('job not found');
   });
 
+  test('Test share submission process [2]', () => {
+    const manager = new Manager(configCopy, configMainCopy);
+    manager.handleTemplate(rpcDataCopy, false);
+    const submission = {
+      extraNonce1: 0,
+      nonce: '00',
+      headerHash: 'xxxx',
+      mixHash: '00',
+    };
+    const client = mockClient();
+    const response = manager.handleShare(1, client, submission);
+    expect(response.error[0]).toBe(20);
+    expect(response.error[1]).toBe('invalid header submission [1]');
+  });
+
   test('Test share submission process [3]', () => {
     const manager = new Manager(configCopy, configMainCopy);
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
       extraNonce1: 0,
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '00'.toString('hex'),
-      nonce: 0,
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      nonce: '00',
+      headerHash: '00',
+      mixHash: 'xxxx',
     };
     const client = mockClient();
     const response = manager.handleShare(1, client, submission);
     expect(response.error[0]).toBe(20);
-    expect(response.error[1]).toBe('incorrect size of ntime');
+    expect(response.error[1]).toBe('invalid mixHash submission');
   });
 
   test('Test share submission process [4]', () => {
@@ -151,17 +142,14 @@ describe('Test manager functionality', () => {
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
       extraNonce1: 0,
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '7036c54f'.toString('hex'),
-      nonce: 0,
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      nonce: 'xxxx',
+      headerHash: '00',
+      mixHash: '00',
     };
     const client = mockClient();
     const response = manager.handleShare(1, client, submission);
     expect(response.error[0]).toBe(20);
-    expect(response.error[1]).toBe('ntime out of range');
+    expect(response.error[1]).toBe('invalid nonce submission');
   });
 
   test('Test share submission process [5]', () => {
@@ -169,12 +157,39 @@ describe('Test manager functionality', () => {
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
       extraNonce1: 0,
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: '00'.toString('hex'),
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      nonce: 'xxxx',
+      headerHash: '00',
+      mixHash: '00',
+    };
+    const client = mockClient();
+    const response = manager.handleShare(1, client, submission);
+    expect(response.error[0]).toBe(20);
+    expect(response.error[1]).toBe('invalid nonce submission');
+  });
+
+  test('Test share submission process [6]', () => {
+    const manager = new Manager(configCopy, configMainCopy);
+    manager.handleTemplate(rpcDataCopy, false);
+    const submission = {
+      extraNonce1: '1952',
+      nonce: '19522aaaad98a7ec',
+      headerHash: '4c3ec261b8b84f36ffadad0f07b007748866d422c1c8006ccce526ad67088fe7',
+      mixHash: '9d82ca253ae7011b8f9f2e12cba5a4373134197b89b5c9ecf6913f3c7d0bc45caa'
+    };
+    const client = mockClient();
+    const response = manager.handleShare(1, client, submission);
+    expect(response.error[0]).toBe(20);
+    expect(response.error[1]).toBe('incorrect size of mixHash');
+  });
+
+  test('Test share submission process [7]', () => {
+    const manager = new Manager(configCopy, configMainCopy);
+    manager.handleTemplate(rpcDataCopy, false);
+    const submission = {
+      extraNonce1: '1952',
+      nonce: '19522aaaad98a7ecaa',
+      headerHash: '4c3ec261b8b84f36ffadad0f07b007748866d422c1c8006ccce526ad67088fe7',
+      mixHash: '9d82ca253ae7011b8f9f2e12cba5a4373134197b89b5c9ecf6913f3c7d0bc45c'
     };
     const client = mockClient();
     const response = manager.handleShare(1, client, submission);
@@ -182,17 +197,29 @@ describe('Test manager functionality', () => {
     expect(response.error[1]).toBe('incorrect size of nonce');
   });
 
-  test('Test share submission process [6]', () => {
+  test('Test share submission process [8]', () => {
     const manager = new Manager(configCopy, configMainCopy);
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
-      extraNonce1: '00000001'.toString('hex'),
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: 'fe1a0000'.toString('hex'),
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      extraNonce1: '00',
+      nonce: '19522aaaad98a7ec',
+      headerHash: '4c3ec261b8b84f36ffadad0f07b007748866d422c1c8006ccce526ad67088fe7',
+      mixHash: '9d82ca253ae7011b8f9f2e12cba5a4373134197b89b5c9ecf6913f3c7d0bc45c'
+    };
+    const client = mockClient();
+    const response = manager.handleShare(1, client, submission);
+    expect(response.error[0]).toBe(24);
+    expect(response.error[1]).toBe('nonce out of worker range');
+  });
+
+  test('Test share submission process [9]', () => {
+    const manager = new Manager(configCopy, configMainCopy);
+    manager.handleTemplate(rpcDataCopy, false);
+    const submission = {
+      extraNonce1: 'b750',
+      nonce: 'b7502aaaac75284c',
+      headerHash: 'a940277ad64417e5d645d884522f66d733cfc91ab0a87b32d6400ed28c6b8f2e',
+      mixHash: 'ab1957f31544c9a133eebccdd30dfefc3deda8ab3015aa12aac8b164346152ab'
     };
     const client = mockClient();
     client.addrPrimary = null;
@@ -201,17 +228,14 @@ describe('Test manager functionality', () => {
     expect(response.error[1]).toBe('worker address isn\'t set properly');
   });
 
-  test('Test share submission process [7]', () => {
+  test('Test share submission process [10]', () => {
     const manager = new Manager(configCopy, configMainCopy);
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
-      extraNonce1: '00000001'.toString('hex'),
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: 'fe1a0000'.toString('hex'),
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
+      extraNonce1: '1952',
+      nonce: '19522aaaad98a7ec',
+      headerHash: '4c3ec261b8b84f36ffadad0f07b007748866d422c1c8006ccce526ad67088fe7',
+      mixHash: '9d82ca253ae7011b8f9f2e12cba5a4373134197b89b5c9ecf6913f3c7d0bc45c'
     };
     const client = mockClient();
     manager.handleShare(1, client, submission);
@@ -220,61 +244,18 @@ describe('Test manager functionality', () => {
     expect(response.error[1]).toBe('duplicate share');
   });
 
-  test('Test share submission process [8]', () => {
-    const manager = new Manager(configCopy, configMainCopy);
-    manager.handleTemplate(rpcDataCopy, false);
-    const submission = {
-      extraNonce1: '00000001'.toString('hex'),
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: 'fe1a0000'.toString('hex'),
-      versionBit: '20000000',
-      versionMask: '1fffe000',
-      asicboost: true,
-    };
-    const client = mockClient();
-    const response = manager.handleShare(1, client, submission);
-    expect(response.error[0]).toBe(20);
-    expect(response.error[1]).toBe('invalid version bit');
-  });
-
-  test('Test share submission process [9]', () => {
-    const manager = new Manager(configCopy, configMainCopy);
-    manager.handleTemplate(rpcDataCopy, false);
-    const submission = {
-      extraNonce1: '00000001'.toString('hex'),
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: 'fe1a0000'.toString('hex'),
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: true,
-    };
-    const client = mockClient();
-    client.previousDifficulty = 1;
-    client.difficulty = 1;
-    const response = manager.handleShare(1, client, submission);
-    expect(response.error[0]).toBe(23);
-    expect(response.error[1].slice(0, 23)).toBe('low difficulty share of');
-  });
-
   test('Test share submission process [10]', () => {
     const manager = new Manager(configCopy, configMainCopy);
     manager.handleTemplate(rpcDataCopy, false);
     const submission = {
-      extraNonce1: '00000001'.toString('hex'),
-      extraNonce2: '00000000'.toString('hex'),
-      nTime: '6036c54f'.toString('hex'),
-      nonce: 'fe1a0000'.toString('hex'),
-      versionBit: '00000000',
-      versionMask: '1fffe000',
-      asicboost: false,
+      extraNonce1: '1952',
+      nonce: '19522aaaad98a7ec',
+      headerHash: '3c3ec261b8b84f36ffadad0f07b007748866d422c1c8006ccce526ad67088fe7',
+      mixHash: '9d82ca253ae7011b8f9f2e12cba5a4373134197b89b5c9ecf6913f3c7d0bc45c'
     };
     const client = mockClient();
-    client.previousDifficulty = 1;
-    client.difficulty = 1;
     const response = manager.handleShare(1, client, submission);
-    expect(response.error[0]).toBe(23);
-    expect(response.error[1].slice(0, 23)).toBe('low difficulty share of');
+    expect(response.error[0]).toBe(20);
+    expect(response.error[1]).toBe('invalid header submission [2]');
   });
 });

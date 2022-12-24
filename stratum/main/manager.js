@@ -76,7 +76,7 @@ const Manager = function(config, configMain) {
     const job = _this.validJobs[jobId];
 
     // Establish Hashing Algorithms
-    const hashDigest = Algorithms.kawpow.hash();
+    const hashDigest = Algorithms.evrprogpow.hash();
     const headerDigest = Algorithms.sha256d.hash();
     const coinbaseDigest = Algorithms.sha256d.hash();
 
@@ -163,9 +163,9 @@ const Manager = function(config, configMain) {
     }
 
     // Calculate Share Difficulty
-    const shareMultiplier = Algorithms.kawpow.multiplier;
-    const shareDiff = Algorithms.kawpow.diff / Number(headerBigInt) * shareMultiplier;
-    const blockDiffAdjusted = job.difficulty * Algorithms.kawpow.multiplier;
+    const shareMultiplier = Algorithms.evrprogpow.multiplier;
+    const shareDiff = Algorithms.evrprogpow.diff / Number(headerBigInt) * shareMultiplier;
+    const blockDiffAdjusted = job.difficulty * Algorithms.evrprogpow.multiplier;
     const blockHash = hashOutputBuffer.toString('hex');
     const blockHex = job.handleBlocks(headerBuffer, coinbaseBuffer, nonceBuffer, mixHashBuffer).toString('hex');
 
