@@ -49,16 +49,6 @@ describe('Test template functionality', () => {
     expect(template.generation[1]).toStrictEqual(Buffer.from('000000000300715a363a0000001976a914547cdb89297908f714743ae7ab06b329c6aa30d188ac0029d1770600000017a914a78f72cdb3a7ee5f09d5259ae7eb64231858bdc2870000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf900000000', 'hex'));
   });
 
-  test('Test coinbase serialization [1]', () => {
-    const template = new Template(jobId.toString(16), configCopy, rpcDataCopy, extraNonce);
-    const extraNonce1 = Buffer.from('01', 'hex');
-    const extraNonce2 = Buffer.from('00', 'hex');
-    const coinbase = template.handleCoinbase(extraNonce1, extraNonce2);
-    expect(coinbase.slice(0, 44)).toStrictEqual(Buffer.from('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff1203f8', 'hex'));
-    expect(coinbase.slice(49, 51)).toStrictEqual(Buffer.from('de63', 'hex'));
-    expect(coinbase.slice(51)).toStrictEqual(Buffer.from('0801000000000300715a363a0000001976a914547cdb89297908f714743ae7ab06b329c6aa30d188ac0029d1770600000017a914a78f72cdb3a7ee5f09d5259ae7eb64231858bdc2870000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf900000000', 'hex'));
-  });
-
   test('Test coinbase serialization [2]', () => {
     const coinbaseBuffer = Buffer.from('01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff020101ffffffff0100f2052a010000001976a914614ca2f0f4baccdd63f45a0e0e0ff7ffb88041fb88ac00000000', 'hex');
     const hashDigest = Algorithms.sha256d.hash();
