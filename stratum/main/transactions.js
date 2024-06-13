@@ -16,11 +16,11 @@ const Transactions = function(config, rpcData) {
       public: Buffer.from('0488B21E', 'hex').readUInt32LE(0),
       private: Buffer.from('0488ADE4', 'hex').readUInt32LE(0),
     },
-    peerMagic: '4556524d',
-    pubKeyHash: Buffer.from('21', 'hex').readUInt8(0),
-    scriptHash: Buffer.from('5C', 'hex').readUInt8(0),
-    wif: Buffer.from('80', 'hex').readUInt8(0),
-    coin: 'evr',
+    peerMagic: '4d455743',
+    pubKeyHash: Buffer.from('32', 'hex').readUInt8(0),
+    scriptHash: Buffer.from('7A', 'hex').readUInt8(0),
+    wif: Buffer.from('70', 'hex').readUInt8(0),
+    coin: 'mewc',
   };
 
   // Testnet Configuration
@@ -30,11 +30,11 @@ const Transactions = function(config, rpcData) {
       public: Buffer.from('043587CF', 'hex').readUInt32LE(0),
       private: Buffer.from('04358394', 'hex').readUInt32LE(0),
     },
-    peerMagic: '45565254',
-    pubKeyHash: Buffer.from('6F', 'hex').readUInt8(0),
-    scriptHash: Buffer.from('C4', 'hex').readUInt8(0),
-    wif: Buffer.from('EF', 'hex').readUInt8(0),
-    coin: 'evr',
+    peerMagic: '6d657763',
+    pubKeyHash: Buffer.from('6D', 'hex').readUInt8(0),
+    scriptHash: Buffer.from('7C', 'hex').readUInt8(0),
+    wif: Buffer.from('72', 'hex').readUInt8(0),
+    coin: 'tmewc',
   };
 
   // Calculate Generation Transaction
@@ -95,14 +95,14 @@ const Transactions = function(config, rpcData) {
     ]);
 
     // Handle Founder Transactions
-    const address = _this.rpcData.coinbasetxn.minerdevfund.addresses[0];
-    const founderReward = _this.rpcData.coinbasetxn.minerdevfund.minimumvalue;
-    const founderScript = utils.addressToScript(address, network);
-    reward -= founderReward;
+    const address = _this.rpcData.CommunityAutonomousAddress;
+    const communityReward = _this.rpcData.CommunityAutonomousValue;
+    const communityScript = utils.addressToScript(address, network);
+    reward -= communityReward;
     txOutputBuffers.push(Buffer.concat([
-      utils.packUInt64LE(founderReward),
-      utils.varIntBuffer(founderScript.length),
-      founderScript,
+      utils.packUInt64LE(communityReward),
+      utils.varIntBuffer(communityScript.length),
+      communityScript,
     ]));
     
     // Handle Recipient Transactions

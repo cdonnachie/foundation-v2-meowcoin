@@ -24,15 +24,15 @@ extern "C" {
  * The Ethash algorithm revision implemented as specified in the Ethash spec
  * https://github.com/ethereum/wiki/wiki/Ethash.
  */
-#define KAWPOW_REVISION "23"
+#define MEOWPOW_REVISION "23"
 
-#define KAWPOW_EPOCH_LENGTH 12000
-#define KAWPOW_LIGHT_CACHE_ITEM_SIZE 64
-#define KAWPOW_FULL_DATASET_ITEM_SIZE 128
-#define KAWPOW_NUM_DATASET_ACCESSES 64
+#define MEOWPOW_EPOCH_LENGTH 7500
+#define MEOWPOW_LIGHT_CACHE_ITEM_SIZE 64
+#define MEOWPOW_FULL_DATASET_ITEM_SIZE 128
+#define MEOWPOW_NUM_DATASET_ACCESSES 64
 
 
-struct kawpow_epoch_context
+struct meowpow_epoch_context
 {
     const int epoch_number;
     const int light_cache_num_items;
@@ -42,10 +42,10 @@ struct kawpow_epoch_context
 };
 
 
-struct kawpow_epoch_context_full;
+struct meowpow_epoch_context_full;
 
 
-struct kawpow_result
+struct meowpow_result
 {
     union ethash_hash256 final_hash;
     union ethash_hash256 mix_hash;
@@ -61,7 +61,7 @@ struct kawpow_result
  * @param epoch_number  The epoch number.
  * @return              The number items in the light cache.
  */
-int kawpow_calculate_light_cache_num_items(int epoch_number) NOEXCEPT;
+int meowpow_calculate_light_cache_num_items(int epoch_number) NOEXCEPT;
 
 
 /**
@@ -73,17 +73,17 @@ int kawpow_calculate_light_cache_num_items(int epoch_number) NOEXCEPT;
  * @param epoch_number  The epoch number.
  * @return              The number items in the full dataset.
  */
-int kawpow_calculate_full_dataset_num_items(int epoch_number) NOEXCEPT;
+int meowpow_calculate_full_dataset_num_items(int epoch_number) NOEXCEPT;
 
 /**
  * Calculates the epoch seed hash.
  * @param epoch_number  The epoch number.
  * @return              The epoch seed hash.
  */
-union ethash_hash256 kawpow_calculate_epoch_seed(int epoch_number) NOEXCEPT;
+union ethash_hash256 meowpow_calculate_epoch_seed(int epoch_number) NOEXCEPT;
 
 
-struct kawpow_epoch_context* kawpow_create_epoch_context(int epoch_number) NOEXCEPT;
+struct meowpow_epoch_context* meowpow_create_epoch_context(int epoch_number) NOEXCEPT;
 
 /**
  * Creates the epoch context with the full dataset initialized.
@@ -91,38 +91,38 @@ struct kawpow_epoch_context* kawpow_create_epoch_context(int epoch_number) NOEXC
  * The memory for the full dataset is only allocated and marked as "not-generated".
  * The items of the full dataset are generated on the fly when hit for the first time.
  *
- * The memory allocated in the context MUST be freed with kawpow_destroy_epoch_context_full().
+ * The memory allocated in the context MUST be freed with meowpow_destroy_epoch_context_full().
  *
  * @param epoch_number  The epoch number.
  * @return  Pointer to the context or null in case of memory allocation failure.
  */
-struct kawpow_epoch_context_full* kawpow_create_epoch_context_full(int epoch_number) NOEXCEPT;
+struct meowpow_epoch_context_full* meowpow_create_epoch_context_full(int epoch_number) NOEXCEPT;
 
-void kawpow_destroy_epoch_context(struct kawpow_epoch_context* context) NOEXCEPT;
+void meowpow_destroy_epoch_context(struct meowpow_epoch_context* context) NOEXCEPT;
 
-void kawpow_destroy_epoch_context_full(struct kawpow_epoch_context_full* context) NOEXCEPT;
+void meowpow_destroy_epoch_context_full(struct meowpow_epoch_context_full* context) NOEXCEPT;
 
 
 /**
  * Get global shared epoch context.
  */
-const struct kawpow_epoch_context* kawpow_get_global_epoch_context(int epoch_number) NOEXCEPT;
+const struct meowpow_epoch_context* meowpow_get_global_epoch_context(int epoch_number) NOEXCEPT;
 
 /**
  * Get global shared epoch context with full dataset initialized.
  */
-const struct kawpow_epoch_context_full* kawpow_get_global_epoch_context_full(
+const struct meowpow_epoch_context_full* meowpow_get_global_epoch_context_full(
     int epoch_number) NOEXCEPT;
 
 
-struct kawpow_result kawpow_hash(const struct kawpow_epoch_context* context,
+struct meowpow_result meowpow_hash(const struct meowpow_epoch_context* context,
     const union ethash_hash256* header_hash, uint64_t nonce) NOEXCEPT;
 
-bool kawpow_verify(const struct kawpow_epoch_context* context,
+bool meowpow_verify(const struct meowpow_epoch_context* context,
     const union ethash_hash256* header_hash, const union ethash_hash256* mix_hash, uint64_t nonce,
     const union ethash_hash256* boundary) NOEXCEPT;
 
-bool kawpow_verify_final_hash(const union ethash_hash256* header_hash,
+bool meowpow_verify_final_hash(const union ethash_hash256* header_hash,
     const union ethash_hash256* mix_hash, uint64_t nonce,
     const union ethash_hash256* boundary) NOEXCEPT;
 

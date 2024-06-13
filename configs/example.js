@@ -1,6 +1,6 @@
 /*
  *
- * Example (Evrmore)
+ * Example (Meowcoin)
  *
  */
 
@@ -56,16 +56,16 @@ config.primary.address = '[address]';
 
 // Coin Configuration
 config.primary.coin = {};
-config.primary.coin.name = 'Evrmore';
-config.primary.coin.symbol = 'EVR';
-config.primary.coin.algorithm = 'evrprogpow';
+config.primary.coin.name = 'Meowcoin';
+config.primary.coin.symbol = 'MEWC';
+config.primary.coin.algorithm = 'meowpow';
 
 // Daemon Configuration
 config.primary.daemons = [];
 
 const daemons1 = {};
 daemons1.host = '127.0.0.1';
-daemons1.port = 8819;
+daemons1.port = 9766;
 daemons1.username = '';
 daemons1.password = '';
 config.primary.daemons.push(daemons1);

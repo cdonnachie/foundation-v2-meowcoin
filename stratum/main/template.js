@@ -17,7 +17,7 @@ const Template = function(jobId, config, rpcData, placeholder) {
 
   // Template Variables
   this.target = _this.rpcData.target ? BigInt(`0x${ _this.rpcData.target }`) : utils.bigIntFromBitsHex(_this.rpcData.bits);
-  this.difficulty = parseFloat((Algorithms.evrprogpow.diff / Number(_this.target)).toFixed(9));
+  this.difficulty = parseFloat((Algorithms.meowpow.diff / Number(_this.target)).toFixed(9));
   this.generation = new Transactions(config, rpcData).handleGeneration(placeholder);
 
   // Manage Serializing Block Headers
@@ -72,12 +72,12 @@ const Template = function(jobId, config, rpcData, placeholder) {
     const coinbaseDigest = Algorithms.sha256d.hash();
 
     // Calculate Epoch Length
-    const epochLength = Math.floor(this.rpcData.height / Algorithms.evrprogpow.epochLength);
+    const epochLength = Math.floor(this.rpcData.height / Algorithms.meowpow.epochLength);
     const extraNonce1Buffer = Buffer.from(client.extraNonce1, 'hex');
 
     // Pad Difficulty to Broadcast
     let zeroPad = '';
-    const adjPow = Algorithms.evrprogpow.diff / _this.difficulty;
+    const adjPow = Algorithms.meowpow.diff / _this.difficulty;
     if ((64 - adjPow.toString(16).length) !== 0) {
       zeroPad = '0';
       zeroPad = zeroPad.repeat((64 - (adjPow.toString(16).length)));

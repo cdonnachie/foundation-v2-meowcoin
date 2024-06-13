@@ -7,29 +7,32 @@
 #include "utils/ethash/primes.h"
 #include "utils/include/keccak.hpp"
 #include "utils/support/attributes.h"
-#include "evrprogpow_internal.hpp"
-#include "evrprogpow_progpow.hpp"
+#include "meowpow_internal.hpp"
+#include "meowpow_progpow.hpp"
 
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
 
-namespace kawpow_main
+namespace meowpow_main
 {
 // Internal constants:
 constexpr static int light_cache_init_size = 1 << 24;
 constexpr static int light_cache_growth = 1 << 17;
 constexpr static int light_cache_rounds = 3;
-constexpr static unsigned int full_dataset_init_size = (1U << 30) * 3;
+constexpr static int full_dataset_init_size = 1 << 30;
 constexpr static int full_dataset_growth = 1 << 23;
 constexpr static int full_dataset_item_parents = 512;
 
+//MeowPow Dag Change
+constexpr static int meowpow_dagchange_epoch = 110;
+
 // Verify constants:
-static_assert(sizeof(ethash::hash512) == KAWPOW_LIGHT_CACHE_ITEM_SIZE, "");
-static_assert(sizeof(ethash::hash1024) == KAWPOW_FULL_DATASET_ITEM_SIZE, "");
-static_assert(light_cache_item_size == KAWPOW_LIGHT_CACHE_ITEM_SIZE, "");
-static_assert(full_dataset_item_size == KAWPOW_FULL_DATASET_ITEM_SIZE, "");
+static_assert(sizeof(ethash::hash512) == MEOWPOW_LIGHT_CACHE_ITEM_SIZE, "");
+static_assert(sizeof(ethash::hash1024) == MEOWPOW_FULL_DATASET_ITEM_SIZE, "");
+static_assert(light_cache_item_size == MEOWPOW_LIGHT_CACHE_ITEM_SIZE, "");
+static_assert(full_dataset_item_size == MEOWPOW_FULL_DATASET_ITEM_SIZE, "");
 
 
 namespace
@@ -133,12 +136,19 @@ epoch_context_full* create_epoch_context(
     static_assert(sizeof(epoch_context_full) < sizeof(ethash::hash512), "epoch_context too big");
     static constexpr size_t context_alloc_size = sizeof(ethash::hash512);
 
-    const int light_cache_num_items = calculate_light_cache_num_items(epoch_number);
-    const int full_dataset_num_items = calculate_full_dataset_num_items(epoch_number);
+    int meow_epoch = epoch_number;
+    if (epoch_number >= meowpow_dagchange_epoch)
+    {
+        // note, int truncates, it doesnt round, 10 == 10.5. So this is ok.
+        meow_epoch = epoch_number*4; //This should pass 4gb DAG size
+    }
+
+    const int light_cache_num_items = calculate_light_cache_num_items(meow_epoch);
+    const int full_dataset_num_items = calculate_full_dataset_num_items(meow_epoch);
     const size_t light_cache_size = get_light_cache_size(light_cache_num_items);
     const size_t full_dataset_size =
         full ? static_cast<size_t>(full_dataset_num_items) * sizeof(ethash::hash1024) :
-               kawpow_progpow::l1_cache_size;
+               meowpow_progpow::l1_cache_size;
 
     const size_t alloc_size = context_alloc_size + light_cache_size + full_dataset_size;
 
@@ -165,7 +175,7 @@ epoch_context_full* create_epoch_context(
     };
 
     auto* full_dataset_2048 = reinterpret_cast<ethash::hash2048*>(l1_cache);
-    for (uint32_t i = 0; i < kawpow_progpow::l1_cache_size / sizeof(full_dataset_2048[0]); ++i)
+    for (uint32_t i = 0; i < meowpow_progpow::l1_cache_size / sizeof(full_dataset_2048[0]); ++i)
         full_dataset_2048[i] = calculate_dataset_item_2048(*context, i);
     return context;
 }
@@ -347,13 +357,13 @@ search_result search(const epoch_context_full& context, const ethash::hash256& h
     }
     return {};
 }
-}  // namespace kawpow_main
+}  // namespace meowpow_main
 
-using namespace kawpow_main;
+using namespace meowpow_main;
 
 extern "C" {
 
-ethash_hash256 kawpow_calculate_epoch_seed(int epoch_number) noexcept
+ethash_hash256 meowpow_calculate_epoch_seed(int epoch_number) noexcept
 {
     ethash_hash256 epoch_seed = {};
     for (int i = 0; i < epoch_number; ++i)
@@ -361,7 +371,7 @@ ethash_hash256 kawpow_calculate_epoch_seed(int epoch_number) noexcept
     return epoch_seed;
 }
 
-int kawpow_calculate_light_cache_num_items(int epoch_number) noexcept
+int meowpow_calculate_light_cache_num_items(int epoch_number) noexcept
 {
     static constexpr int item_size = sizeof(ethash::hash512);
     static constexpr int num_items_init = light_cache_init_size / item_size;
@@ -376,7 +386,7 @@ int kawpow_calculate_light_cache_num_items(int epoch_number) noexcept
     return num_items;
 }
 
-int kawpow_calculate_full_dataset_num_items(int epoch_number) noexcept
+int meowpow_calculate_full_dataset_num_items(int epoch_number) noexcept
 {
     static constexpr int item_size = sizeof(ethash::hash1024);
     static constexpr int num_items_init = full_dataset_init_size / item_size;
@@ -391,28 +401,28 @@ int kawpow_calculate_full_dataset_num_items(int epoch_number) noexcept
     return num_items;
 }
 
-epoch_context* kawpow_create_epoch_context(int epoch_number) noexcept
+epoch_context* meowpow_create_epoch_context(int epoch_number) noexcept
 {
     return generic::create_epoch_context(build_light_cache, epoch_number, false);
 }
 
-epoch_context_full* kawpow_create_epoch_context_full(int epoch_number) noexcept
+epoch_context_full* meowpow_create_epoch_context_full(int epoch_number) noexcept
 {
     return generic::create_epoch_context(build_light_cache, epoch_number, true);
 }
 
-void kawpow_destroy_epoch_context_full(epoch_context_full* context) noexcept
+void meowpow_destroy_epoch_context_full(epoch_context_full* context) noexcept
 {
-    kawpow_destroy_epoch_context(context);
+    meowpow_destroy_epoch_context(context);
 }
 
-void kawpow_destroy_epoch_context(epoch_context* context) noexcept
+void meowpow_destroy_epoch_context(epoch_context* context) noexcept
 {
     context->~epoch_context();
     std::free(context);
 }
 
-kawpow_result kawpow_hash(
+meowpow_result meowpow_hash(
     const epoch_context* context, const ethash::hash256* header_hash, uint64_t nonce) noexcept
 {
     const ethash::hash512 seed = hash_seed(*header_hash, nonce);
@@ -420,14 +430,14 @@ kawpow_result kawpow_hash(
     return {hash_final(seed, mix_hash), mix_hash};
 }
 
-bool kawpow_verify_final_hash(const ethash::hash256* header_hash, const ethash::hash256* mix_hash, uint64_t nonce,
+bool meowpow_verify_final_hash(const ethash::hash256* header_hash, const ethash::hash256* mix_hash, uint64_t nonce,
     const ethash::hash256* boundary) noexcept
 {
     const ethash::hash512 seed = hash_seed(*header_hash, nonce);
     return is_less_or_equal(hash_final(seed, *mix_hash), *boundary);
 }
 
-bool kawpow_verify(const epoch_context* context, const ethash::hash256* header_hash,
+bool meowpow_verify(const epoch_context* context, const ethash::hash256* header_hash,
     const ethash::hash256* mix_hash, uint64_t nonce, const ethash::hash256* boundary) noexcept
 {
     const ethash::hash512 seed = hash_seed(*header_hash, nonce);

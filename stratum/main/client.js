@@ -180,7 +180,7 @@ const Client = function(config, socket, id, authorizeFn) {
 
     // Pad Difficulty to Broadcast
     let zeroPad = '';
-    const adjPow = Algorithms.evrprogpow.diff / _this.difficulty;
+    const adjPow = Algorithms.meowpow.diff / _this.difficulty;
     if ((64 - adjPow.toString(16).length) !== 0) {
       zeroPad = '0';
       zeroPad = zeroPad.repeat((64 - (adjPow.toString(16).length)));
@@ -218,7 +218,7 @@ const Client = function(config, socket, id, authorizeFn) {
 
     // Pad Difficulty to Broadcast
     let zeroPad = '';
-    const adjPow = Algorithms.evrprogpow.diff / _this.difficulty;
+    const adjPow = Algorithms.meowpow.diff / _this.difficulty;
     if ((64 - adjPow.toString(16).length) !== 0) {
       zeroPad = '0';
       zeroPad = zeroPad.repeat((64 - (adjPow.toString(16).length)));

@@ -14,26 +14,26 @@
 
 #pragma once
 
-#include "evrprogpow.h"
+#include "meowpow.h"
 #include "utils/include/hash_types.hpp"
 
 #include <cstdint>
 #include <cstring>
 #include <memory>
 
-namespace kawpow_main
+namespace meowpow_main
 {
-constexpr auto revision = KAWPOW_REVISION;
+constexpr auto revision = MEOWPOW_REVISION;
 
-static constexpr int epoch_length = KAWPOW_EPOCH_LENGTH;
-static constexpr int light_cache_item_size = KAWPOW_LIGHT_CACHE_ITEM_SIZE;
-static constexpr int full_dataset_item_size = KAWPOW_FULL_DATASET_ITEM_SIZE;
-static constexpr int num_dataset_accesses = KAWPOW_NUM_DATASET_ACCESSES;
+static constexpr int epoch_length = MEOWPOW_EPOCH_LENGTH;
+static constexpr int light_cache_item_size = MEOWPOW_LIGHT_CACHE_ITEM_SIZE;
+static constexpr int full_dataset_item_size = MEOWPOW_FULL_DATASET_ITEM_SIZE;
+static constexpr int num_dataset_accesses = MEOWPOW_NUM_DATASET_ACCESSES;
 
-using epoch_context = kawpow_epoch_context;
-using epoch_context_full = kawpow_epoch_context_full;
+using epoch_context = meowpow_epoch_context;
+using epoch_context_full = meowpow_epoch_context_full;
 
-using result = kawpow_result;
+using result = meowpow_result;
 
 /// Constructs a 256-bit hash from an array of bytes.
 ///
@@ -61,14 +61,14 @@ struct search_result
 };
 
 
-/// Alias for kawpow_calculate_light_cache_num_items().
-static constexpr auto calculate_light_cache_num_items = kawpow_calculate_light_cache_num_items;
+/// Alias for meowpow_calculate_light_cache_num_items().
+static constexpr auto calculate_light_cache_num_items = meowpow_calculate_light_cache_num_items;
 
-/// Alias for kawpow_calculate_full_dataset_num_items().
-static constexpr auto calculate_full_dataset_num_items = kawpow_calculate_full_dataset_num_items;
+/// Alias for meowpow_calculate_full_dataset_num_items().
+static constexpr auto calculate_full_dataset_num_items = meowpow_calculate_full_dataset_num_items;
 
-/// Alias for kawpow_calculate_epoch_seed().
-static constexpr auto calculate_epoch_seed = kawpow_calculate_epoch_seed;
+/// Alias for meowpow_calculate_epoch_seed().
+static constexpr auto calculate_epoch_seed = meowpow_calculate_epoch_seed;
 
 
 /// Calculates the epoch number out of the block number.
@@ -100,30 +100,30 @@ inline constexpr uint64_t get_full_dataset_size(int num_items) noexcept
 }
 
 /// Owned unique pointer to an epoch context.
-using epoch_context_ptr = std::unique_ptr<epoch_context, decltype(&kawpow_destroy_epoch_context)>;
+using epoch_context_ptr = std::unique_ptr<epoch_context, decltype(&meowpow_destroy_epoch_context)>;
 
 using epoch_context_full_ptr =
-    std::unique_ptr<epoch_context_full, decltype(&kawpow_destroy_epoch_context_full)>;
+    std::unique_ptr<epoch_context_full, decltype(&meowpow_destroy_epoch_context_full)>;
 
 /// Creates Ethash epoch context.
 ///
-/// This is a wrapper for kawpow_create_epoch_number C function that returns
+/// This is a wrapper for meowpow_create_epoch_number C function that returns
 /// the context as a smart pointer which handles the destruction of the context.
 inline epoch_context_ptr create_epoch_context(int epoch_number) noexcept
 {
-    return {kawpow_create_epoch_context(epoch_number), kawpow_destroy_epoch_context};
+    return {meowpow_create_epoch_context(epoch_number), meowpow_destroy_epoch_context};
 }
 
 inline epoch_context_full_ptr create_epoch_context_full(int epoch_number) noexcept
 {
-    return {kawpow_create_epoch_context_full(epoch_number), kawpow_destroy_epoch_context_full};
+    return {meowpow_create_epoch_context_full(epoch_number), meowpow_destroy_epoch_context_full};
 }
 
 
 inline result hash(
     const epoch_context& context, const ethash::hash256& header_hash, uint64_t nonce) noexcept
 {
-    return kawpow_hash(&context, &header_hash, nonce);
+    return meowpow_hash(&context, &header_hash, nonce);
 }
 
 result hash(const epoch_context_full& context, const ethash::hash256& header_hash, uint64_t nonce) noexcept;
@@ -131,13 +131,13 @@ result hash(const epoch_context_full& context, const ethash::hash256& header_has
 inline bool verify_final_hash(const ethash::hash256& header_hash, const ethash::hash256& mix_hash, uint64_t nonce,
     const ethash::hash256& boundary) noexcept
 {
-    return kawpow_verify_final_hash(&header_hash, &mix_hash, nonce, &boundary);
+    return meowpow_verify_final_hash(&header_hash, &mix_hash, nonce, &boundary);
 }
 
 inline bool verify(const epoch_context& context, const ethash::hash256& header_hash, const ethash::hash256& mix_hash,
     uint64_t nonce, const ethash::hash256& boundary) noexcept
 {
-    return kawpow_verify(&context, &header_hash, &mix_hash, nonce, &boundary);
+    return meowpow_verify(&context, &header_hash, &mix_hash, nonce, &boundary);
 }
 
 search_result search_light(const epoch_context& context, const ethash::hash256& header_hash,
@@ -161,12 +161,12 @@ int find_epoch_number(const ethash::hash256& seed) noexcept;
 /// Get global shared epoch context.
 inline const epoch_context& get_global_epoch_context(int epoch_number) noexcept
 {
-    return *kawpow_get_global_epoch_context(epoch_number);
+    return *meowpow_get_global_epoch_context(epoch_number);
 }
 
 /// Get global shared epoch context with full dataset initialized.
 inline const epoch_context_full& get_global_epoch_context_full(int epoch_number) noexcept
 {
-    return *kawpow_get_global_epoch_context_full(epoch_number);
+    return *meowpow_get_global_epoch_context_full(epoch_number);
 }
-}  // namespace kawpow_main
+}  // namespace meowpow_main

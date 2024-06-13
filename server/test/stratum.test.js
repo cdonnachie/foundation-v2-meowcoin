@@ -9,7 +9,7 @@ config.primary.address = 'EQrdpxFbEYgBUk2tfsQcUyHUcGHCN35PMH';
 config.primary.recipients[0].address = 'EQrdpxFbEYgBUk2tfsQcUyHUcGHCN35PMH';
 config.primary.daemons = [{
   'host': '127.0.0.1',
-  'port': '8819',
+  'port': '9766',
   'username': 'foundation',
   'password': 'foundation'
 }];
@@ -46,7 +46,7 @@ describe('Test stratum functionality', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const logger = new Logger(configMainCopy);
     const stratum = new Stratum(logger, configCopy, configMainCopy);
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .post('/', (body) => body.method === 'getpeerinfo')
       .reply(200, JSON.stringify({
         id: 'nocktest',
@@ -60,14 +60,14 @@ describe('Test stratum functionality', () => {
         error: null,
         result: null,
       }));
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .post('/').reply(200, JSON.stringify([
         { id: 'nocktest', error: null, result: { isvalid: true, address: 'EQrdpxFbEYgBUk2tfsQcUyHUcGHCN35PMH' }},
         { id: 'nocktest', error: null, result: { networkhashps: 0 }},
         { id: 'nocktest', error: null, result: { chain: 'main', difficulty: 0 }},
         { id: 'nocktest', error: null, result: { protocolversion: 1, connections: 1 }},
       ]));
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .persist()
       .post('/', (body) => body.method === 'getblocktemplate')
       .reply(200, JSON.stringify({
@@ -87,7 +87,7 @@ describe('Test stratum functionality', () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const logger = new Logger(configMainCopy);
     const stratum = new Stratum(logger, configCopy, configMainCopy);
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .post('/', (body) => body.method === 'getpeerinfo')
       .reply(200, JSON.stringify({
         id: 'nocktest',
@@ -101,14 +101,14 @@ describe('Test stratum functionality', () => {
         error: null,
         result: null,
       }));
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .post('/').reply(200, JSON.stringify([
         { id: 'nocktest', error: null, result: { isvalid: true, address: 'EQrdpxFbEYgBUk2tfsQcUyHUcGHCN35PMH' }},
         { id: 'nocktest', error: null, result: { networkhashps: 0 }},
         { id: 'nocktest', error: null, result: { chain: 'main', difficulty: 0 }},
         { id: 'nocktest', error: null, result: { protocolversion: 1, connections: 1 }},
       ]));
-    nock('http://127.0.0.1:8819')
+    nock('http://127.0.0.1:9766')
       .persist()
       .post('/', (body) => body.method === 'getblocktemplate')
       .reply(200, JSON.stringify({

@@ -7,9 +7,9 @@
 
 // Main Imports
 #include "algorithms/sha256d/sha256d.h"
-#include "algorithms/evrprogpow/evrprogpow.h"
-#include "algorithms/evrprogpow/evrprogpow.hpp"
-#include "algorithms/evrprogpow/evrprogpow_progpow.hpp"
+#include "algorithms/meowpow/meowpow.h"
+#include "algorithms/meowpow/meowpow.hpp"
+#include "algorithms/meowpow/meowpow_progpow.hpp"
 
 using namespace node;
 using namespace v8;
@@ -19,8 +19,8 @@ const char* ToCString(const Nan::Utf8String& value) {
   return *value ? *value : "<string conversion failed>";
 }
 
-// evrprogpow Algorithm
-NAN_METHOD(evrprogpow) {
+// meowpow Algorithm
+NAN_METHOD(meowpow) {
 
   // Check Arguments for Errors
   if (info.Length() < 5)
@@ -63,7 +63,7 @@ NAN_METHOD(sha256d) {
 }
 
 NAN_MODULE_INIT(init) {
-  Nan::Set(target, Nan::New("evrprogpow").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(evrprogpow)).ToLocalChecked());
+  Nan::Set(target, Nan::New("meowpow").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(meowpow)).ToLocalChecked());
   Nan::Set(target, Nan::New("sha256d").ToLocalChecked(), Nan::GetFunction(Nan::New<FunctionTemplate>(sha256d)).ToLocalChecked());
 }
 

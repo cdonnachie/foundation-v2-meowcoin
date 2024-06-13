@@ -8,25 +8,25 @@
 
 #pragma once
 
-#include "evrprogpow.hpp"
+#include "meowpow.hpp"
 #include "utils/ethash/endianness.hpp"
 
 #include <memory>
 #include <vector>
 
-extern "C" struct kawpow_epoch_context_full : kawpow_epoch_context
+extern "C" struct meowpow_epoch_context_full : meowpow_epoch_context
 {
     ethash_hash1024* full_dataset;
 
-    constexpr kawpow_epoch_context_full(int epoch, int light_num_items,
+    constexpr meowpow_epoch_context_full(int epoch, int light_num_items,
         const ethash::hash512* light, const uint32_t* l1, int dataset_num_items,
         ethash_hash1024* dataset) noexcept
-      : kawpow_epoch_context{epoch, light_num_items, light, l1, dataset_num_items},
+      : meowpow_epoch_context{epoch, light_num_items, light, l1, dataset_num_items},
         full_dataset{dataset}
     {}
 };
 
-namespace kawpow_main
+namespace meowpow_main
 {
 inline bool is_less_or_equal(const ethash::hash256& a, const ethash::hash256& b) noexcept
 {
@@ -64,4 +64,4 @@ epoch_context_full* create_epoch_context(
 
 }  // namespace generic
 
-}  // namespace kawpow_main
+}  // namespace meowpow_main

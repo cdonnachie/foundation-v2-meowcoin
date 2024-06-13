@@ -4,13 +4,13 @@ const Algorithms = require('../main/algorithms');
 
 describe('Test algorithm functionality', () => {
 
-  // EvrProgPow Validation
-  test('Test implemented evrprogpow algorithm [2]', () => {
+  // MeowPow Validation
+  test('Test implemented meowpow algorithm [2]', () => {
     const header = Buffer.from('63543d3913fe56e6720c5e61e8d208d05582875822628f483279a3e8d9c9a8b3', 'hex');
     const mixhash = Buffer.from('89732e5ff8711c32558a308fc4b8ee77416038a70995670e3eb84cbdead2e337', 'hex');
     const nonce = Buffer.from('9b95eb33003ba288', 'hex');
     const output = Buffer.alloc(32);
-    expect(Algorithms.evrprogpow.hash({}).apply(null, [header, nonce, 262524, mixhash, output])).toBe(false);
+    expect(Algorithms.meowpow.hash({}).apply(null, [header, nonce, 262524, mixhash, output])).toBe(false);
   });
 
   // Deterministic
