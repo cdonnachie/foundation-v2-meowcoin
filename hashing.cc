@@ -34,13 +34,13 @@ NAN_METHOD(meowpow) {
   ethash::hash256* hash_out_ptr = (ethash::hash256*)Buffer::Data(Nan::To<v8::Object>(info[4]).ToLocalChecked());
 
   // Process/Define Passed Parameters [2]
-  static kawpow_main::epoch_context_ptr context{nullptr, nullptr};
-  const auto epoch_number = kawpow_main::get_epoch_number(block_height);
+  static meowpow_main::epoch_context_ptr context{nullptr, nullptr};
+  const auto epoch_number = meowpow_main::get_epoch_number(block_height);
   if (!context || context->epoch_number != epoch_number)
-      context = kawpow_main::create_epoch_context(epoch_number);
+      context = meowpow_main::create_epoch_context(epoch_number);
 
   // Hash Input Data and Check if Valid Solution
-  bool is_valid = kawpow_progpow::verify(*context, block_height, header_hash_ptr, *mix_hash_ptr, *nonce64_ptr, hash_out_ptr);
+  bool is_valid = meowpow_progpow::verify(*context, block_height, header_hash_ptr, *mix_hash_ptr, *nonce64_ptr, hash_out_ptr);
   if (is_valid) info.GetReturnValue().Set(Nan::True());
   else info.GetReturnValue().Set(Nan::False());
 }

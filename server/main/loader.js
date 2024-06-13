@@ -68,14 +68,14 @@ const Loader = function(logger, configMain) {
   this.handleConfigs = function() {
     let config = null;
     const normalizedPath = path.join(__dirname, '../../configs/');
-    if (fs.existsSync(normalizedPath + 'meowpow.js')) {
-      config = require(normalizedPath + 'meowpow.js');
+    if (fs.existsSync(normalizedPath + 'meowcoin.js')) {
+      config = require(normalizedPath + 'meowcoin.js');
       if (!config.enabled) return;
       if (!_this.checkPoolDaemons(config)) return;
       if (!_this.checkPoolPorts(config)) return;
       if (!_this.checkPoolRecipients(config)) return;
     } else {
-      throw new Error('Unable to find meowpow.js file. Read the installation/setup instructions');
+      throw new Error('Unable to find meowcoin.js file. Read the installation/setup instructions');
     }
     return config;
   };

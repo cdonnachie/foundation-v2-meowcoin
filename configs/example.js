@@ -39,9 +39,9 @@ ports1.port = 3002;
 ports1.enabled = true;
 ports1.tls = false;
 ports1.difficulty = {};
-ports1.difficulty.initial = 32;
-ports1.difficulty.minimum = 8;
-ports1.difficulty.maximum = 512;
+ports1.difficulty.initial = .5;
+ports1.difficulty.minimum = .1;
+ports1.difficulty.maximum = 5;
 ports1.difficulty.targetTime = 15;
 ports1.difficulty.retargetTime = 90;
 ports1.difficulty.variance = 0.3;
@@ -72,11 +72,6 @@ config.primary.daemons.push(daemons1);
 
 // Recipients Configuration
 config.primary.recipients = [];
-
-const recipient1 = {};
-recipient1.address = '[address]';
-recipient1.percentage = 0.05;
-config.primary.recipients.push(recipient1);
 
 // ZMQ Configuration
 config.primary.zmq = {};
